@@ -1,15 +1,21 @@
 # get-subdomains
 
-To install dependencies:
+## Usage
 
-```bash
-bun install
+### Build
+
+```
+bun run build
 ```
 
-To run:
+### Use `get-subdomains`
 
-```bash
-bun run index.ts
+```
+./bin/get-subdomains example.com
 ```
 
-This project was created using `bun init` in bun v1.2.2. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+By specifying `--json`, you can output in JSON format.
+
+```
+./bin/get-subdomains example.com --json
+```
