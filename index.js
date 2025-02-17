@@ -25,7 +25,7 @@ const main = defineCommand({
         spinner.start();
 
         const res = await fetch(`https://crt.sh/?q=${args.domain}&output=json`);
-        const issues = (await res.json()) as Issue[];
+        const issues = await res.json();
         const commonNames = [...new Set(issues.map((i) => i.name_value))];
 
         const subDomains = commonNames
@@ -40,16 +40,3 @@ const main = defineCommand({
 });
 
 runMain(main);
-
-interface Issue {
-    id: number;
-    issuer_ca_id: number;
-    issuer_name: string;
-    common_name: string;
-    name_value: string;
-    entry_timestamp: string;
-    not_before: string;
-    not_after: string;
-    serial_number: string;
-    result_count: number;
-}
