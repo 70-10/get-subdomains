@@ -27,7 +27,7 @@ const main = defineCommand({
 
         const res = await fetch(`https://crt.sh/?q=${args.domain}&output=json`);
         const issues = await res.json();
-        const commonNames = [...new Set(issues.map((i) => i.name_value))];
+        const commonNames = [...new Set(issues.map((i) => i.common_name).filter(common_name => common_name.includes(args.domain)))];
 
         const subDomains = commonNames
             .filter((cn) => cn.split(".").length > 2 && !cn.startsWith("*."))
