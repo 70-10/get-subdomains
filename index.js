@@ -21,23 +21,20 @@ const main = defineCommand({
     },
   },
   async run({ args }) {
-    const spinner = yoctoSpinner({ text: `Check subdomains: ${args.domain}` });
+    const { domain } = args;
+    const spinner = yoctoSpinner({ text: `Check subdomains: ${domain}` });
 
     spinner.start();
 
-    const res = await fetch(`https://crt.sh/?q=${args.domain}&output=json`);
-    const issues = await res.json();
-    const commonNames = [
-      ...new Set(
-        issues
-          .map((i) => i.common_name)
-          .filter((common_name) => common_name.includes(args.domain))
-      ),
-    ];
+    const res = await fetch(`https://crt.sh/?q=${domain}&output=json`);
 
-    const subDomains = commonNames
-      .filter((cn) => cn.split(".").length > 2 && !cn.startsWith("*."))
-      .sort();
+    if (!res.ok || res.headers.get("content-type") !== "application/json") {
+      spinner.error("Failed to retrieve subdomains");
+      return;
+    }
+
+    const issues = await res.json();
+    const subDomains = getSubdomains(issues, domain);
 
     spinner.success(`Found ${subDomains.length} subdomains\n`);
     console.log(
@@ -47,3 +44,14 @@ const main = defineCommand({
 });
 
 runMain(main);
+
+function getSubdomains(issues, domain) {
+  return [
+    ...new Set(
+      issues
+        .map((i) => i.common_name)
+        .filter((common_name) => common_name.includes(domain))
+        .filter((cn) => cn.split(".").length > 2 && !cn.startsWith("*."))
+    ),
+  ].sort();
+}
