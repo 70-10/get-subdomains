@@ -26,7 +26,7 @@ const main = defineCommand({
 
     spinner.start();
 
-    const res = await fetch(`https://crt.sh/?q=${domain}&output=json`);
+    const res = await fetch(`https://crt.sh/json?q=${domain}`);
 
     if (!res.ok || res.headers.get("content-type") !== "application/json") {
       spinner.error("Failed to retrieve subdomains");
